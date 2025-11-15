@@ -76,23 +76,21 @@ const Index = () => {
     setIsTyping(true);
 
     try {
-      let weatherContext: string | undefined;
-      const loc = maybeExtractWeatherLocation(content);
-      if (loc) {
-        try {
-          const w = await getWeather(loc);
-          weatherContext = formatWeatherForLLM(w);
-        } catch {
-          // ignore if weather fetch fails; fall back to normal chat
-        }
-      }
+      // let weatherContext: string | undefined;
+      // const loc = maybeExtractWeatherLocation(content);
+      // if (loc) {
+      //   try {
+      //     const w = await getWeather(loc);
+      //     weatherContext = formatWeatherForLLM(w);
+      //   } catch {
+      //     // ignore if weather fetch fails; fall back to normal chat
+      //   }
+      // }
 
-      const augmented = weatherContext
-        ? `${content}\n\n[Weather Information: ${weatherContext}]`
-        : content;
+      
 
       const data = await sendChatMessage(
-        augmented,
+        content,
         messages.map(m => ({ role: m.role, content: m.content }))
       );
       
