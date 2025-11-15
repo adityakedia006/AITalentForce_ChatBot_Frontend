@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect } from "react";
-import { Download, MessageSquare, Bot } from "lucide-react";
+import { Download, MessageSquare, Bot, Trash2 } from "lucide-react";
 import ChatMessage from "@/components/ChatMessage";
 import TypingIndicator from "@/components/TypingIndicator";
 import ChatInput from "@/components/ChatInput";
 import RecordingModal from "@/components/RecordingModal";
 import ThemeToggle from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
-import { sendChatMessage, assist, ChatMessage as ApiChatMessage, translateText, getWeather, WeatherResponse } from "@/lib/api";
+import { sendChatMessage, assist, translateText } from "@/lib/api";
 import { t } from "@/lib/i18n";
 
 interface Message {
@@ -38,37 +38,14 @@ const Index = () => {
     scrollToBottom();
   }, [messages, isTyping]);
 
-  // Weather intent + location detector (EN + JA)
-  const maybeExtractWeatherLocation = (text: string): string | null => {
-    const lowered = text.toLowerCase();
-    const hasWeather = /(weather|temperature|temp|forecast|climate|rain|sunny|cloudy|degree|degrees|wind|windy|snow|snowy|humidity|hot|cold|天気|気温|温度|予報|雨|晴れ|曇り|風|風速|湿度|暑い|寒い|雪)/iu.test(text);
-    if (!hasWeather) return null;
-
-    // English: look for "in/at/for <one|two words>"
-    const mEn = text.match(/\b(?:in|at|for)\s+([\p{L}.'-]+(?:\s+[\p{L}.'-]+)?)/iu);
-    if (mEn && mEn[1]) {
-      return mEn[1].replace(/[？?。．.,!;]+$/g, "").trim();
-    }
-
-    // Japanese patterns
-    // 1) <LOC>(の|で|は)?(天気|気温|予報|雨|晴れ|曇り)
-    const mJa1 = text.match(/([\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}ーA-Za-z]+)\s*(?:の|で|は)?\s*(?:天気|気温|予報|雨|晴れ|曇り)/u);
-    if (mJa1 && mJa1[1]) {
-      return mJa1[1].replace(/[？?。．.,!;」』\]]+$/g, "").trim();
-    }
-    // 2) (天気|…)(は|って)? <LOC>
-    const mJa2 = text.match(/(?:天気|気温|予報|雨|晴れ|曇り)\s*(?:は|って)?\s*([\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}ーA-Za-z]+)/u);
-    if (mJa2 && mJa2[1]) {
-      return mJa2[1].replace(/[？?。．.,!;」』\]]+$/g, "").trim();
-    }
-
-    return null;
+  const handleClearChat = () => {
+    setMessages([
+      {
+        role: "assistant",
+        content: "Hello! I'm your AI assistant. How can I help you today?"
+      }
+    ]);
   };
-
-  const formatWeatherForLLM = (w: WeatherResponse) =>
-    `Location: ${w.location}, Temperature: ${w.temperature}°C, ` +
-    `Condition: ${(w as any).weather_description || (w as any).description || "Unknown"}, ` +
-    `Wind Speed: ${w.wind_speed ?? "NA"} km/h, Humidity: ${w.humidity ?? "NA"}%`;
 
   const handleSendMessage = async (content: string) => {
     const userMessage: Message = { role: "user", content };
@@ -76,19 +53,6 @@ const Index = () => {
     setIsTyping(true);
 
     try {
-      // let weatherContext: string | undefined;
-      // const loc = maybeExtractWeatherLocation(content);
-      // if (loc) {
-      //   try {
-      //     const w = await getWeather(loc);
-      //     weatherContext = formatWeatherForLLM(w);
-      //   } catch {
-      //     // ignore if weather fetch fails; fall back to normal chat
-      //   }
-      // }
-
-      
-
       const data = await sendChatMessage(
         content,
         messages.map(m => ({ role: m.role, content: m.content }))
@@ -229,6 +193,16 @@ const Index = () => {
               title="Toggle chat language"
             >
               {uiLanguage === "en" ? "EN" : "日本語"}
+            </Button>
+            <Button
+              onClick={handleClearChat}
+              variant="outline"
+              size="sm"
+              className="gap-2 rounded-xl"
+              title="Clear chat"
+            >
+              <Trash2 className="w-4 h-4" />
+              Clear
             </Button>
             <Button
               onClick={handleDownloadHistory}
