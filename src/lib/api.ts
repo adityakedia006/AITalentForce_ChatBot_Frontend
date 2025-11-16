@@ -1,6 +1,20 @@
 // API Service for connecting to FastAPI backend
 
 const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || "http://localhost:8000";
+const API_FALLBACK_URL = (import.meta as any).env?.VITE_API_FALLBACK_URL;
+
+// Helper function to try primary URL, then fallback
+async function fetchWithFallback(endpoint: string, options?: RequestInit): Promise<Response> {
+  try {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+    if (response.ok) return response;
+    throw new Error(`Primary API failed with status ${response.status}`);
+  } catch (error) {
+    if (!API_FALLBACK_URL) throw error;
+    console.warn(`Primary API failed, trying fallback URL...`);
+    return fetch(`${API_FALLBACK_URL}${endpoint}`, options);
+  }
+}
 
 export interface ChatMessage {
   role: "user" | "assistant";
@@ -43,7 +57,7 @@ export async function textToSpeech(
   text: string,
   options?: { model?: string; encoding?: string; container?: string }
 ): Promise<Blob> {
-  const response = await fetch(`${API_BASE_URL}/api/text-to-speech`, {
+  const response = await fetchWithFallback("/api/text-to-speech", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ text, ...options }),
@@ -65,7 +79,7 @@ export async function sendChatMessage(
   conversationHistory?: ChatMessage[],
   systemPrompt?: string
 ): Promise<ChatResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/chat`, {
+  const response = await fetchWithFallback("/api/chat", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -115,7 +129,7 @@ export async function assist(
     formData.append("system_prompt", options.systemPrompt);
   }
 
-  const response = await fetch(`${API_BASE_URL}/api/assist`, {
+  const response = await fetchWithFallback("/api/assist", {
     method: "POST",
     body: formData,
     signal: options.signal,
@@ -130,7 +144,7 @@ export async function assist(
 }
 
 export async function translateText(req: TranslateRequest): Promise<TranslateResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/translate`, {
+  const response = await fetchWithFallback("/api/translate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(req),
