@@ -18,12 +18,6 @@ export interface ChatResponse {
   conversation_history: ChatMessage[];
 }
 
-export interface VoiceChatResponse {
-  transcribed_text: string;
-  response: string;
-  conversation_history: ChatMessage[];
-}
-
 export interface AssistResponse {
   input_type: "text" | "audio";
   transcribed_text?: string;
@@ -31,24 +25,7 @@ export interface AssistResponse {
   conversation_history: ChatMessage[];
 }
 
-export interface SpeechToTextResponse {
-  text: string;
-}
 
-export interface WeatherResponse {
-  location: string;
-  temperature: number;
-  // Backend returns `weather_description`; keep `description` optional for backwards compatibility
-  weather_description: string;
-  description?: string;
-  humidity?: number;
-  wind_speed?: number;
-}
-
-export interface HealthResponse {
-  status: string;
-  message: string;
-}
 
 export interface TranslateRequest {
   text: string;
@@ -81,17 +58,6 @@ export async function textToSpeech(
 }
 
 /**
- * Check API health status
- */
-export async function checkHealth(): Promise<HealthResponse> {
-  const response = await fetch(`${API_BASE_URL}/health`);
-  if (!response.ok) {
-    throw new Error("Health check failed");
-  }
-  return response.json();
-}
-
-/**
  * Send a chat message to the AI assistant
  */
 export async function sendChatMessage(
@@ -114,58 +80,6 @@ export async function sendChatMessage(
   if (!response.ok) {
     const error = await response.json().catch(() => ({ detail: "Unknown error" }));
     throw new Error(error.detail || "Failed to get chat response");
-  }
-
-  return response.json();
-}
-
-/**
- * Convert speech to text
- */
-export async function speechToText(audioBlob: Blob): Promise<SpeechToTextResponse> {
-  const formData = new FormData();
-  formData.append("audio_file", audioBlob, "recording.webm");
-
-  const response = await fetch(`${API_BASE_URL}/api/speech-to-text`, {
-    method: "POST",
-    body: formData,
-  });
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: "Unknown error" }));
-    throw new Error(error.detail || "Failed to transcribe audio");
-  }
-
-  return response.json();
-}
-
-/**
- * Complete voice chat flow (speech-to-text + chat completion)
- */
-export async function voiceChat(
-  audioBlob: Blob,
-  conversationHistory?: ChatMessage[],
-  systemPrompt?: string
-): Promise<VoiceChatResponse> {
-  const formData = new FormData();
-  formData.append("audio_file", audioBlob, "recording.webm");
-  
-  if (conversationHistory) {
-    formData.append("conversation_history", JSON.stringify(conversationHistory));
-  }
-  
-  if (systemPrompt) {
-    formData.append("system_prompt", systemPrompt);
-  }
-
-  const response = await fetch(`${API_BASE_URL}/api/voice-chat`, {
-    method: "POST",
-    body: formData,
-  });
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: "Unknown error" }));
-    throw new Error(error.detail || "Failed to process voice chat");
   }
 
   return response.json();

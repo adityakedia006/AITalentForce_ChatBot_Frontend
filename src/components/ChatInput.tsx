@@ -80,14 +80,12 @@ const ChatInput = ({ onSendMessage, onSendAudio, disabled, isRecording, onRecord
     }
   };
 
-  // If parent turns off recording (e.g., via RecordingModal Stop), ensure we stop the recorder here
   useEffect(() => {
     if (!isRecording && mediaRecorder) {
       try {
         mediaRecorder.stop();
-      } catch (_) {
-        // no-op
-      } finally {
+      } catch (_) {}
+      finally {
         setMediaRecorder(null);
       }
     }

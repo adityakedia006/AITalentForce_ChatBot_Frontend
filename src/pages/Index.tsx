@@ -19,7 +19,7 @@ const Index = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Hello! I'm your AI assistant. How can I help you today?"
+      content: "Hey there! I'm Anya. Need outfit advice? Just share the event and where you'll be, and I'll style you like a star!"
     }
   ]);
   const [isTyping, setIsTyping] = useState(false);
@@ -28,7 +28,6 @@ const Index = () => {
   const [uiLanguage, setUiLanguage] = useState<"en" | "ja">("en");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const processingControllerRef = useRef<AbortController | null>(null);
-  // Popups disabled: no toast usage
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -72,7 +71,6 @@ const Index = () => {
       const assistantMessage: Message = { role: "assistant", content: assistantEn, ja: assistantJa };
       setMessages(prev => [...prev, assistantMessage]);
     } catch (error) {
-      // Popups disabled: fail silently, keep console for dev
       console.error("Error sending message:", error);
     } finally {
       setIsTyping(false);
@@ -82,7 +80,6 @@ const Index = () => {
   const handleSendAudio = async (audioBlob: Blob) => {
     setIsProcessingAudio(true);
     setIsTyping(true);
-    // Create an AbortController to allow canceling the processing request
     const controller = new AbortController();
     processingControllerRef.current = controller;
 
@@ -114,7 +111,6 @@ const Index = () => {
       const assistantMessage: Message = { role: "assistant", content: assistantEn, ja: assistantJa };
       setMessages(prev => [...prev, assistantMessage]);
     } catch (error: any) {
-      // If the request was aborted, silently reset state without showing an error
       if (error?.name === "AbortError") {
         setIsProcessingAudio(false);
         processingControllerRef.current = null;
@@ -147,8 +143,6 @@ const Index = () => {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-    
-    // No popup after download
   };
 
   return (
