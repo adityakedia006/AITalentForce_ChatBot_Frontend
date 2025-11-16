@@ -2,9 +2,10 @@ export type Lang = "en" | "ja";
 
 const dict: Record<Lang, Record<string, string>> = {
   en: {
-    "app.title": "AI Assistant",
-    "app.subtitle": "Your intelligent chat companion",
-    "download": "Download History",
+    "app.title": "Anya",
+    "app.subtitle": "Your fashion assistant",
+    "download": "Download Chat",
+    "clear": "Clear",
     "placeholder": "Type your message here...",
     "processingAudio": "Processing audio…",
     "processing": "Processing…",
@@ -22,9 +23,10 @@ const dict: Record<Lang, Record<string, string>> = {
      "wake.detected": "Wake word detected"
   },
   ja: {
-    "app.title": "AIアシスタント",
-    "app.subtitle": "あなたの賢いチャットパートナー",
-    "download": "履歴をダウンロード",
+    "app.title": "Anya",
+    "app.subtitle": "あなたのファッションアシスタント",
+    "download": "チャットをダウンロード",
+    "clear": "クリア",
     "placeholder": "ここにメッセージを入力...",
     "processingAudio": "音声を処理中…",
     "processing": "処理中…",

@@ -215,38 +215,6 @@ export async function assist(
   return response.json();
 }
 
-/**
- * Get weather information for a location
- */
-export async function getWeather(location: string): Promise<WeatherResponse> {
-  const response = await fetch(
-    `${API_BASE_URL}/api/weather?location=${encodeURIComponent(location)}`
-  );
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: "Unknown error" }));
-    throw new Error(error.detail || "Failed to get weather information");
-  }
-
-  return response.json();
-}
-
-/**
- * Get API information
- */
-export async function getApiInfo(): Promise<any> {
-  const response = await fetch(`${API_BASE_URL}/api/info`);
-  
-  if (!response.ok) {
-    throw new Error("Failed to get API info");
-  }
-  
-  return response.json();
-}
-
-/**
- * Translate text between English and Japanese
- */
 export async function translateText(req: TranslateRequest): Promise<TranslateResponse> {
   const response = await fetch(`${API_BASE_URL}/api/translate`, {
     method: "POST",

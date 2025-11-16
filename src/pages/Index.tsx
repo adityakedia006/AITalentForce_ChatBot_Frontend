@@ -42,7 +42,7 @@ const Index = () => {
     setMessages([
       {
         role: "assistant",
-        content: "Hello! I'm your AI assistant. How can I help you today?"
+        content: "Hey there! I’m Anya. Need outfit advice? Just share the event and where you’ll be, and I’ll style you like a star!"
       }
     ]);
   };
@@ -202,7 +202,7 @@ const Index = () => {
               title="Clear chat"
             >
               <Trash2 className="w-4 h-4" />
-              Clear
+              {t("clear", uiLanguage)}
             </Button>
             <Button
               onClick={handleDownloadHistory}
@@ -261,7 +261,7 @@ const Index = () => {
       </div>
 
       {/* Input */}
-      <div className="bg-gradient-bg border-t border-border">
+      <div className="bg-gradient-bg border-t border-border pb-4">
         <ChatInput
           onSendMessage={handleSendMessage}
           onSendAudio={handleSendAudio}

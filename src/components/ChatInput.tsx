@@ -94,7 +94,7 @@ const ChatInput = ({ onSendMessage, onSendAudio, disabled, isRecording, onRecord
   }, [isRecording, mediaRecorder]);
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-4xl mx-auto px-4 pb-6">
+    <form onSubmit={handleSubmit} className="w-full max-w-4xl mx-auto px-4 pb-6 pt-4">
       <div className="bg-card rounded-2xl shadow-chat-md p-4 border border-border">
         <div className="flex gap-2 items-end">
           <div className="relative flex-1">
