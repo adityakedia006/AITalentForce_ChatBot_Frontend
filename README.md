@@ -1,4 +1,4 @@
-# Anya — Weather & Fashion Chatbot (Frontend codebase)
+# Anya - Weather & Fashion Chatbot (Frontend codebase)
 
 By Aditya Kedia
 
@@ -53,4 +53,5 @@ npm run preview
 
 ## Note
 - This is a frontend‑only codebase. You need to have a compatible backend running to use the features.
+
 - Please speak in loud and clear for both English and Japanese inputs to get accurate transcriptions.
