@@ -50,9 +50,7 @@ export interface TranslateResponse {
   translated_text: string;
 }
 
-/**
- * Convert text to speech (Deepgram TTS)
- */
+
 export async function textToSpeech(
   text: string,
   options?: { model?: string; encoding?: string; container?: string }
